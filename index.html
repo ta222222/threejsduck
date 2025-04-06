@@ -12,21 +12,15 @@
             box-sizing: border-box;
         }
         body {
-            display: flex;
-            justify-content: center; /* Center horizontally */
-            align-items: center; /* Center vertically */
             margin: 0;
             height: 100vh;
             background-color: #222;
             overflow: hidden; /* Prevent scrollbar from appearing */
-            cursor: none;
+            cursor: none; /* Hide default cursor */
         }
         #container {
             width: 100%;
             height: 100%;
-            display: flex;
-            justify-content: center; /* Center the canvas */
-            align-items: center; /* Align canvas in case it's smaller */
             position: relative; /* For absolute positioning of the custom cursor */
         }
         #controls-info {
@@ -51,28 +45,18 @@
         /* Custom cursor style */
         .cursor {
             position: absolute;
-            width: 10px;  /* Small size for the custom cursor */
+            width: 10px;  
             height: 10px;
             background-color: #ff0000; /* Red dot color */
             border-radius: 50%; /* Make it round */
             pointer-events: none; /* Prevent the cursor from interfering with clicks */
             transform: translate(-50%, -50%); /* Center the cursor */
             z-index: 10;
+            display: none; /* Hide by default */
         }
 
         /* Media Queries for Responsiveness */
         @media (max-width: 600px) {
-            body {
-                flex-direction: column; /* Stack elements on smaller screens */
-            }
-            #controls-info {
-                width: 90%; /* Allow controls to take more space */
-                max-width: none; /* Reset max-width */
-                left: 5%; /* Center the controls info */
-            }
-        }
-
-        @media (max-width: 400px) {
             #controls-info {
                 font-size: 0.7em; /* Smaller font for very small screens */
             }
@@ -157,9 +141,20 @@
                 const offset = 5; // Slight offset to center the cursor
                 cursor.style.left = (e.pageX + offset) + 'px';  
                 cursor.style.top = e.pageY + 'px';
+                cursor.style.display = 'block'; // Show cursor on mouse move
             });
 
+            // Detect touch devices and hide cursor if necessary
+            if (isTouchDevice()) {
+                const cursor = document.getElementById('cursor');
+                cursor.style.display = 'none';
+            }
+
             animate();
+        }
+
+        function isTouchDevice() {
+            return 'ontouchstart' in window || navigator.maxTouchPoints;
         }
 
         function loadModel() {

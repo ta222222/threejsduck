@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>responsive glTF THREE.js duck</title>
+    <title>responsive glTF THREE.js duck 2</title>
     <script src="https://cdn.jsdelivr.net/npm/three@0.139.0/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.139.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.139.0/examples/js/loaders/GLTFLoader.js"></script>
@@ -71,7 +71,7 @@
         <p>Drag: Rotate</p>
         <p>Two Finger Drag: Pan</p>
         <p>Pinch: Zoom</p>
-        <p>Double Tap: Zoom To</p>
+        <p>Double Click: Zoom Reset</p>
         <p><strong>Keyboard Controls:</strong></p>
         <p>W/A/S/D: Move</p>
         <p>↑↓←→: Rotate</p>
@@ -159,7 +159,7 @@
 
         function loadModel() {
             const loader = new THREE.GLTFLoader();
-            const gltfUrl = "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/main/2.0/Duck/glTF-Binary/Duck.glb";
+            const gltfUrl = "https://raw.githubusercontent.com/ta222222/threejsduck/main/Duck.glb";
             loader.load(gltfUrl, function (gltf) {
                 model = gltf.scene;
                 model.scale.set(2.5, 2.5, 2.5);

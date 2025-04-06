@@ -3,20 +3,31 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>glTF THREE js</title>
+    <title>responsive glTF THREE.js duck</title>
     <script src="https://cdn.jsdelivr.net/npm/three@0.139.0/build/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.139.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.139.0/examples/js/loaders/GLTFLoader.js"></script>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
             margin: 0;
-            overflow: hidden;
+            height: 100vh;
             background-color: #222;
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="red"><circle cx="7.5" cy="7.5" r="7.5" /></svg>') 7.5 7.5, auto;
+            overflow: hidden; /* Prevent scrollbar from appearing */
+            cursor: none;
         }
         #container {
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center; /* Center the canvas */
+            align-items: center; /* Align canvas in case it's smaller */
+            position: relative; /* For absolute positioning of the custom cursor */
         }
         #controls-info {
             position: absolute;
@@ -29,25 +40,57 @@
             z-index: 10;
             font-size: 0.8em;
             font-family: sans-serif;
-            width: 200px;
+            width: auto;
+            max-width: 200px; /* Maximum width for small screens */
         }
         #controls-info p {
             margin: 5px 0;
             line-height: 1.2;
         }
+
+        /* Custom cursor style */
+        .cursor {
+            position: absolute;
+            width: 10px;  /* Small size for the custom cursor */
+            height: 10px;
+            background-color: #ff0000; /* Red dot color */
+            border-radius: 50%; /* Make it round */
+            pointer-events: none; /* Prevent the cursor from interfering with clicks */
+            transform: translate(-50%, -50%); /* Center the cursor */
+            z-index: 10;
+        }
+
+        /* Media Queries for Responsiveness */
+        @media (max-width: 600px) {
+            body {
+                flex-direction: column; /* Stack elements on smaller screens */
+            }
+            #controls-info {
+                width: 90%; /* Allow controls to take more space */
+                max-width: none; /* Reset max-width */
+                left: 5%; /* Center the controls info */
+            }
+        }
+
+        @media (max-width: 400px) {
+            #controls-info {
+                font-size: 0.7em; /* Smaller font for very small screens */
+            }
+        }
     </style>
 </head>
 <body>
     <div id="container"></div>
+    <div class="cursor" id="cursor"></div> <!-- Custom cursor div -->
     <div id="controls-info">
-        <p><strong>Mouse/Touch Controls:</strong></p>
+        <p><strong>Mouse/Touch Controls</strong></p>
         <p>Drag: Rotate</p>
         <p>Two Finger Drag: Pan</p>
         <p>Pinch: Zoom</p>
         <p>Double Tap: Zoom To</p>
         <p><strong>Keyboard Controls:</strong></p>
         <p>W/A/S/D: Move</p>
-        <p>◀/▲/▼/▶: Rotate</p>
+        <p>↑↓←→: Rotate</p>
     </div>
     <script>
         let scene, camera, renderer, controls;
@@ -61,15 +104,13 @@
 
         function init() {
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x222222);
+            scene.background = new THREE.Color(0x22ffff);
 
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             camera.position.set(0, 5, 15);
 
             renderer = new THREE.WebGLRenderer({ antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             document.getElementById("container").appendChild(renderer.domElement);
 
             controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -80,7 +121,7 @@
             controls.maxDistance = 50;
             controls.target.set(0, 0, 0);
             controls.update();
-            controls.enabled = false;
+            controls.enabled = true;
 
             const ambientLight = new THREE.HemisphereLight(0xffffff, 0x404040, 0.7);
             scene.add(ambientLight);
@@ -109,6 +150,14 @@
             renderer.domElement.addEventListener("touchstart", onTouchStart, false);
             renderer.domElement.addEventListener("touchend", onTouchEnd, false);
             renderer.domElement.addEventListener("touchmove", onTouchMove, false);
+
+            // Mouse move tracking for custom cursor
+            document.addEventListener('mousemove', function(e) {
+                const cursor = document.getElementById('cursor');
+                const offset = 5; // Slight offset to center the cursor
+                cursor.style.left = (e.pageX + offset) + 'px';  
+                cursor.style.top = e.pageY + 'px';
+            });
 
             animate();
         }
@@ -146,10 +195,8 @@
             const fitHeightDistance = maxDimension / (2 * Math.atan(Math.PI * camera.fov / 360));
             const fitWidthDistance = fitHeightDistance / camera.aspect;
             const distance = Math.max(fitHeightDistance, fitWidthDistance) * 1.2;
-            const centerWorld = new THREE.Vector3();
-            model.getWorldPosition(centerWorld);
-            camera.position.set(centerWorld.x, centerWorld.y, centerWorld.z + distance);
-            controls.target.set(centerWorld.x, centerWorld.y, centerWorld.z);
+            camera.position.set(center.x, center.y + 5, center.z + distance);
+            controls.target.set(center.x, center.y, center.z);
             controls.update();
         }
 

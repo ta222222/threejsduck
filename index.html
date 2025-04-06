@@ -12,6 +12,7 @@
             margin: 0;
             overflow: hidden;
             background-color: #222;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="red"><circle cx="7.5" cy="7.5" r="7.5" /></svg>') 7.5 7.5, auto;
         }
         #container {
             width: 100vw;
@@ -117,7 +118,7 @@
             const gltfUrl = "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/main/2.0/Duck/glTF-Binary/Duck.glb";
             loader.load(gltfUrl, function (gltf) {
                 model = gltf.scene;
-                model.scale.set(3, 3, 3);
+                model.scale.set(2.5, 2.5, 2.5);
                 model.traverse((child) => {
                     if (child.isMesh) {
                         child.castShadow = true;
